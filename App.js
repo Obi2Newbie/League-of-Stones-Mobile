@@ -1,21 +1,24 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 import "./global.css";
+import {createStaticNavigation} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import SeConnecter from './src/screens/seConnecter';
+import CreerUnCompte from './src/screens/creerUnCompte';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+const pile = createNativeStackNavigator({
+  screens: {
+    SeConnecter: {
+      screen: SeConnecter,
+      options: {headerShown: false},
+    },
+    CreerUnCompte: {
+      screen: CreerUnCompte,
+      options: {headerShown: false},
+    },
   },
 });
+const Navigation = createStaticNavigation(pile);
+export default function App() {
+  return (
+    <Navigation/>
+  );
+}
