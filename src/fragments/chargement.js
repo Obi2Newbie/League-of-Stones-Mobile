@@ -417,7 +417,7 @@ function GameTitle() {
 }
 
 // ─── Main loader ───────────────────────────────────────────────────────────
-export default function Chargement({ visible = true }) {
+export default function LeagueOfStonesLoader({ visible = true }) {
   return (
     <Modal transparent animationType="fade" visible={visible} statusBarTranslucent>
       <View style={styles.overlay}>
@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'transparent', // fully transparent — sits above current screen
+    backgroundColor: 'rgba(10, 6, 20, 0.72)', // dark purple tint — adjust opacity to taste
   },
 
   star: {
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
   runeBarFill: {
     height: '100%',
     borderRadius: 2,
-    backgroundColor: PURPLE, // LinearGradient can be used here too if desired
+    backgroundColor: PURPLE,
     shadowColor: PURPLE,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.9,
