@@ -8,11 +8,11 @@ const pile = createNativeStackNavigator({
   screens: {
     SeConnecter: {
       screen: SeConnecter,
-      options: {headerShown: false},
+      options: {header: null},
     },
     CreerUnCompte: {
       screen: CreerUnCompte,
-      options: {headerShown: false},
+      options: {header: null},
     },
   },
 });

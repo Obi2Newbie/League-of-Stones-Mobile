@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "League-of-Stones-Mob",
+    "name": "League of Stones",
     "slug": "League-of-Stones-Mob",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,7 +20,8 @@
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      },
+      "package": "com.anonymous.LeagueofStonesMob"
     },
     "web": {
       "favicon": "./assets/favicon.png"
