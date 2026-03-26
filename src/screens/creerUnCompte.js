@@ -18,7 +18,6 @@ export default function CreerUnCompte() {
     const navigation = useNavigation();
     const [donnee, setDonnee] = useState(null);
     const [chargement, setChargement] = useState(false);
-    const [messageErreur, setMessageErreur] = useState('');
     const [erreur, setErreur] = useState(false);
     const shakeAnim = useRef(new Animated.Value(0)).current;
     const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });

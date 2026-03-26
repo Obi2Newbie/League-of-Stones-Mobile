@@ -12,7 +12,6 @@ export const seConnecter = async (email, motDePasse) => {
         });
         return await chargeUtile.json();
     } catch (erreur) {
-        // console.error("Erreur lors de la connexion:", erreur);
         return erreur;
     }
 };
@@ -32,7 +31,6 @@ export const creerUnCompte = async (email, pseudo, motDePasse) => {
         });
         return await chargeUtile.json();
     } catch (erreur) {
-        console.error("Erreur lors de la création de compte: erreur");
         return erreur;
     }
 }

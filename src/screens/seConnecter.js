@@ -6,7 +6,7 @@ import { useColorScheme } from 'nativewind';
 import { seConnecter } from '../../api/request';
 import Chargement from '../fragments/chargement';
 import ToastBanner from '../fragments/toastBanner';
-
+import { useUtilisateur } from '../context/ContexteUtilisateur';
 
 export default function SeConnecter() {
     const [emailActif, setEmailActif] = useState(false);
@@ -17,12 +17,12 @@ export default function SeConnecter() {
     const navigation = useNavigation();
     const { colorScheme } = useColorScheme();
     const iconColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
-    const [donnee, setDonnee] = useState(null);
     const [chargement, setChargement] = useState(false);
     const [erreur, setErreur] = useState(false);
     const shakeAnim = useRef(new Animated.Value(0)).current;
     const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
     const route = useRoute();
+    const { setDonneeUtilisateur } = useUtilisateur();
 
     useEffect(() => {
         const { toastMessage, toastType } = route.params ?? {};
@@ -63,8 +63,8 @@ export default function SeConnecter() {
         try {
             const response = await seConnecter(email, motDePasse);
             if (response && response.token) {
-                setDonnee(response);
-                showToast("Connexion réussie!", "success");
+                console.log("Données reçues, mise à jour du contexte...");
+                setDonneeUtilisateur(response);
             } else {
                 let messageErr = `Erreur de connexion: ${response.message}` || "Réponse inattendue";
                 showToast(messageErr, "error");
