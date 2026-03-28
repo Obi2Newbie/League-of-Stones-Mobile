@@ -14,8 +14,6 @@
     "babel-preset-expo": "~55.0.8",
     "expo": "~55.0.9",
     "expo-status-bar": "~55.0.4",
-    "lottie-ios": "^4.6.0",
-    "lottie-react-native": "^7.3.6",
     "lucide-react-native": "^0.577.0",
     "nativewind": "^4.2.3",
     "react": "19.2.0",
