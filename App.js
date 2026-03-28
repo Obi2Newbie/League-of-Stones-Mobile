@@ -27,7 +27,6 @@ const ecransApp = {
 
 function ContenuNavigation() {
   const { donneeUtilisateur } = useUtilisateur();
-  console.log("État utilisateur actuel :", donneeUtilisateur ? "Connecté" : "Déconnecté");
   const pileDynamique = createNativeStackNavigator({
     screens: donneeUtilisateur ? ecransApp : ecransAuth,
   });

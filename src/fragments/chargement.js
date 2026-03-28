@@ -46,10 +46,10 @@ const MINT   = '#5affb0';
 const ORB_COLORS = [PURPLE, BLUE, GOLD, PINK, MINT];
 
 const LOADING_MSGS = [
-  'Summoning...',
-  'Drawing cards...',
-  'Entering the arena...',
-  'Preparing deck...',
+  'Invocation en cours...',
+  'Distribution des cartes...',
+  'Entrée dans l\'arène...',
+  'Préparation du deck...',
 ];
 
 // ─── Animated Svg helper wrappers ──────────────────────────────────────────
