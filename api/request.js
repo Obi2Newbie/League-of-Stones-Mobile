@@ -127,7 +127,7 @@ export const accepterDefi = async (matchmakingIdAdversaire, token) => {
     }
 };
 
-// Refuser un défi d'un adversaire identifié par son matchmakingId
+// Vérifier si un match est en cours pour cet utilisateur.
 export const verifierMatch = async (token) => {
     try {
         const res = await fetch(`${URL}match/getMatch`, {
@@ -139,5 +139,35 @@ export const verifierMatch = async (token) => {
         return json.data ?? json;
     } catch {
         return null;
+    }
+};
+
+// Récupérer toutes les cartes disponibles dans le jeu.
+export const getCartes = async (token) => {
+    try {
+        const res = await fetch(`${URL}cards`, {
+            method: 'GET',
+            headers: headers(token),
+        });
+        const json = await res.json();
+        const data = json.data ?? json;
+        return Array.isArray(data) ? data : [];
+    } catch (erreur) {
+        return erreur;
+    }
+};
+
+//Initialiser le deck pour le match en cours.
+export const initDeck = async (deck, token) => {
+    try {
+        const deckEncode = encodeURIComponent(JSON.stringify(deck));
+        const res = await fetch(`${URL}match/initDeck?deck=${deckEncode}`, {
+            method: 'GET',
+            headers: headers(token),
+        });
+        const json = await res.json();
+        return json.data ?? json;
+    } catch (erreur) {
+        return erreur;
     }
 };

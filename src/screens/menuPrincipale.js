@@ -6,7 +6,8 @@ import ToastBanner from '../fragments/toastBanner';
 import Chargement from '../fragments/chargement';
 import Pile from '../fragments/pile';
 import ConfirmationMotDePasse from '../fragments/confirmationMotDePasse';
-import { seDeconnecter, supprimerCompte, participer, getJoueursEnLigne, verifierMatch } from '../../api/request';
+import { seDeconnecter, supprimerCompte, participer, getJoueursEnLigne, verifierMatch, envoyerDefi } from '../../api/request';
+import { useNavigation } from '@react-navigation/native';
 
 // Carte joueur en ligne 
 function CarteJoueur({ joueur, onDefier }) {
@@ -64,10 +65,11 @@ export default function MenuPrincipale() {
     const [confirmationVisible, setConfirmationVisible] = useState(false);
     const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
     const [matchmakingId, setMatchmakingId] = useState(null);
+    const navigation = useNavigation();
 
     const showToast = (message, type = 'success') => {
         setToast({ visible: true, message, type });
-        setTimeout(() => setToast(t => ({ ...t, visible: false })), 6000);
+        setTimeout(() => setToast({ ...toast, visible: false }), 6000);
     };
 
     // Rafraîchir les données de matchmaking : joueurs en ligne, défis reçus, match actif
@@ -89,6 +91,7 @@ export default function MenuPrincipale() {
             }
 
             const match = await verifierMatch(token);
+            console.log("Match vérifié :", match);
             if (match) {
                 navigation.navigate('ChoisirDeck');
             }
@@ -147,6 +150,7 @@ export default function MenuPrincipale() {
 
     // Envoyer un défi à un adversaire
     const defier = async (joueur) => {
+        console.log("Défi envoyé à", joueur.name);
         try {
             await envoyerDefi(joueur.matchmakingId, donneeUtilisateur?.token);
             showToast(`Défi envoyé à @${joueur.name} !`, "success");
