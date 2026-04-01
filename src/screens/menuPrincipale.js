@@ -6,7 +6,7 @@ import ToastBanner from '../fragments/toastBanner';
 import Chargement from '../fragments/chargement';
 import Pile from '../fragments/pile';
 import ConfirmationMotDePasse from '../fragments/confirmationMotDePasse';
-import { seDeconnecter, supprimerCompte, participer, getJoueursEnLigne } from '../../api/request';
+import { seDeconnecter, supprimerCompte, participer, getJoueursEnLigne, verifierMatch } from '../../api/request';
 
 // Carte joueur en ligne 
 function CarteJoueur({ joueur, onDefier }) {
@@ -63,26 +63,41 @@ export default function MenuPrincipale() {
     const [pileVisible, setPileVisible] = useState(false);
     const [confirmationVisible, setConfirmationVisible] = useState(false);
     const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
+    const [matchmakingId, setMatchmakingId] = useState(null);
 
     const showToast = (message, type = 'success') => {
         setToast({ visible: true, message, type });
         setTimeout(() => setToast(t => ({ ...t, visible: false })), 6000);
     };
 
+    // Rafraîchir les données de matchmaking : joueurs en ligne, défis reçus, match actif
     const rafraichir = async () => {
+        const token = donneeUtilisateur?.token;
+        if (!token) return;
+
         try {
-            const data = await participer(donneeUtilisateur?.token);
+            const data = await participer(token);
+
+            if (data?.matchmakingId) setMatchmakingId(data.matchmakingId);
             if (data?.request) setDefisRecus(data.request);
 
-            const liste = await getJoueursEnLigne(donneeUtilisateur?.token);
-            if (Array.isArray(liste)) setJoueursEnLigne(liste);
-        } catch (erreur) {
+            const liste = await getJoueursEnLigne(token);
 
+            if (Array.isArray(liste)) {
+                const filtree = liste.filter(j => j.matchmakingId !== (data?.matchmakingId ?? matchmakingId));
+                setJoueursEnLigne(filtree);
+            }
+
+            const match = await verifierMatch(token);
+            if (match) {
+                navigation.navigate('ChoisirDeck');
+            }
+        } catch (erreur) {
+            showToast("Erreur de connexion au serveur.", "error");
         } finally {
             setRaffraichissement(false);
         }
     };
-
     useEffect(() => {
         showToast("Connexion réussie ! Heureux de vous revoir.", "success");
         rafraichir();
@@ -130,14 +145,32 @@ export default function MenuPrincipale() {
         }
     };
 
-    const defier = (joueur) => {
-        showToast(`Défi envoyé à @${joueur.name} !`, "success");
-        // TODO: envoyerDefi(joueur.matchmakingId, donneeUtilisateur?.token)
+    // Envoyer un défi à un adversaire
+    const defier = async (joueur) => {
+        try {
+            await envoyerDefi(joueur.matchmakingId, donneeUtilisateur?.token);
+            showToast(`Défi envoyé à @${joueur.name} !`, "success");
+        } catch {
+            showToast("Impossible d'envoyer le défi.", "error");
+        }
     };
 
-    const accepterDefi = (defi) => {
-        showToast(`Vous acceptez le défi de @${defi.name} !`, "success");
-        // TODO: accepterDefi(defi.matchmakingId, donneeUtilisateur?.token)
+    // Accepter un défi reçu
+    const accepterDefi = async (defi) => {
+        setChargement(true);
+        try {
+            const match = await accepterDefi(defi.matchmakingId, donneeUtilisateur?.token);
+            if (match?.player1) {
+                showToast(`Match créé ! Vous affrontez @${match.player1.name}`, "success");
+                navigation.navigate('ChoisirDeck');
+            } else {
+                showToast(match?.message || "Impossible d'accepter le défi.", "error");
+            }
+        } catch {
+            showToast("Erreur lors de l'acceptation du défi.", "error");
+        } finally {
+            setChargement(false);
+        }
     };
 
     return (
@@ -206,15 +239,6 @@ export default function MenuPrincipale() {
                         ))
                     )}
                 </ScrollView>
-
-                <TouchableOpacity
-                    className="w-full bg-blue-500 rounded-xl py-4 items-center active:bg-blue-600"
-                    activeOpacity={0.85}
-                >
-                    <Text className="text-white font-bold text-sm tracking-wide">
-                        Trouver une partie
-                    </Text>
-                </TouchableOpacity>
             </View>
 
             <Pile

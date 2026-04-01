@@ -4,7 +4,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SeConnecter from './src/screens/seConnecter';
 import CreerUnCompte from './src/screens/creerUnCompte';
 import MenuPrincipale from "./src/screens/menuPrincipale";
-import { Menu } from "lucide-react-native";
 import { UtilisateurProvider, useUtilisateur } from "./src/context/ContexteUtilisateur";
 
 const ecransAuth = {
