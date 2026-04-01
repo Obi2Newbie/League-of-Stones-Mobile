@@ -206,6 +206,15 @@ export default function MenuPrincipale() {
                         ))
                     )}
                 </ScrollView>
+
+                <TouchableOpacity
+                    className="w-full bg-blue-500 rounded-xl py-4 items-center active:bg-blue-600"
+                    activeOpacity={0.85}
+                >
+                    <Text className="text-white font-bold text-sm tracking-wide">
+                        Trouver une partie
+                    </Text>
+                </TouchableOpacity>
             </View>
 
             <Pile
