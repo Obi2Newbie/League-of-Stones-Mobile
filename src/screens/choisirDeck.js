@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useUtilisateur } from '../context/ContexteUtilisateur';
 import ToastBanner from '../fragments/toastBanner';
 import Chargement from '../fragments/chargement';
-import { getCartes, initDeck } from '../../api/request';
+import { getCartes, initDeck, getMatch } from '../../api/request';
 
 const MAX_DECK = 20;
 const COLS = 3;
@@ -45,7 +45,6 @@ function TuileChampion({ carte, selectionne, onPress, petit = false }) {
 export default function ChoisirDeck() {
     const { donneeUtilisateur } = useUtilisateur();
     const navigation = useNavigation();
-
     const [cartes, setCartes] = useState([]);
     const [deck, setDeck] = useState([]);          // tableau de clés sélectionnées
     const [chargement, setChargement] = useState(false);
@@ -99,18 +98,32 @@ export default function ChoisirDeck() {
         try {
             const payload = deck.map(k => ({ key: k }));
             const res = await initDeck(payload, donneeUtilisateur?.token);
-            if (res && !res.message) {
-                showToast("Deck validé ! La partie commence.", "success");
-                navigation.navigate('Jeu');
-            } else {
-                showToast(res?.message || "Erreur lors de la validation du deck.", "error");
+            if (res?.ok == false) {
+                showToast(res.message || "Erreur lors de la validation du deck.", "error");
+                return;
             }
+            showToast("Deck validé ! En attente de l'adversaire...", "success");
+            await attendreDebutMatch();
+
         } catch {
             showToast("Erreur réseau.", "error");
         } finally {
             setChargement(false);
         }
     };
+
+    // Polling jusqu'à ce que le statut ne soit plus "Deck is pending"
+    const attendreDebutMatch = () => new Promise((resolve) => {
+        const intervalle = setInterval(async () => {
+            const match = await getMatch(donneeUtilisateur?.token);
+            const status = (match?.status ?? '').toLowerCase();
+            if (match && !status.includes('pending')) {
+                clearInterval(intervalle);
+                resolve();
+                navigation.navigate('Jeu');
+            }
+        }, 2000);
+    });
 
     const cartesSelectionnees = cartes.filter(c => deck.includes(c.key));
     const deckPlein = deck.length >= MAX_DECK;
@@ -209,8 +222,8 @@ export default function ChoisirDeck() {
                         disabled={deck.length === 0}
                         activeOpacity={0.8}
                         className={`rounded-lg py-4 items-center border ${deck.length === 0
-                                ? 'bg-transparent border-slate-700'
-                                : 'bg-blue-600 border-blue-500'
+                            ? 'bg-transparent border-slate-700'
+                            : 'bg-blue-600 border-blue-500'
                             }`}
                     >
                         <Text className={`font-bold text-sm tracking-wide ${deck.length === 0 ? 'text-slate-600' : 'text-white'

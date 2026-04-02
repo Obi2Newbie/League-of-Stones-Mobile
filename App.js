@@ -6,6 +6,7 @@ import CreerUnCompte from './src/screens/creerUnCompte';
 import MenuPrincipale from "./src/screens/menuPrincipale";
 import { UtilisateurProvider, useUtilisateur } from "./src/context/ContexteUtilisateur";
 import ChoisirDeck from "./src/screens/choisirDeck";
+import Jeu from "./src/screens/jeu";
 
 const ecransAuth = {
   SeConnecter: {
@@ -25,6 +26,10 @@ const ecransApp = {
   },
   ChoisirDeck: {
     screen: ChoisirDeck,
+    options: { headerShown: false },
+  },
+  Jeu: {
+    screen: Jeu,
     options: { headerShown: false },
   },
 };

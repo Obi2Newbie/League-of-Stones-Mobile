@@ -7,7 +7,7 @@ import Chargement from '../fragments/chargement';
 import Pile from '../fragments/pile';
 import ConfirmationMotDePasse from '../fragments/confirmationMotDePasse';
 import { seDeconnecter, supprimerCompte, participer, getJoueursEnLigne, verifierMatch, envoyerDefi, accepterDefi } from '../../api/request';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 
 // Carte joueur en ligne 
 function CarteJoueur({ joueur, onDefier }) {
@@ -56,7 +56,7 @@ function CarteDefi({ defi, onAccepter }) {
 // Menu principal 
 export default function MenuPrincipale() {
     const { donneeUtilisateur, setDonneeUtilisateur } = useUtilisateur();
-
+    const isFocused = useIsFocused();
     const [joueursEnLigne, setJoueursEnLigne] = useState([]);
     const [defisRecus, setDefisRecus] = useState([]);
     const [chargement, setChargement] = useState(false);
@@ -90,10 +90,11 @@ export default function MenuPrincipale() {
                 setJoueursEnLigne(filtree);
             }
 
-            const match = await verifierMatch(token);
-            console.log("Match vérifié :", match);
-            if (match) {
-                navigation.navigate('ChoisirDeck');
+            if (isFocused) {
+                const match = await verifierMatch(token);
+                if (match) {
+                    navigation.navigate('ChoisirDeck');
+                }
             }
         } catch (erreur) {
             showToast("Erreur de connexion au serveur.", "error");
@@ -106,7 +107,7 @@ export default function MenuPrincipale() {
         rafraichir();
         const intervalle = setInterval(rafraichir, 10000);
         return () => clearInterval(intervalle);
-    }, []);
+    }, [isFocused]);
 
     // Déconnexion
     const deconnecter = async () => {

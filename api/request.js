@@ -157,11 +157,111 @@ export const getCartes = async (token) => {
     }
 };
 
-//Initialiser le deck pour le match en cours.
+// Initialiser le deck pour le match en cours.
 export const initDeck = async (deck, token) => {
     try {
         const deckEncode = encodeURIComponent(JSON.stringify(deck));
         const res = await fetch(`${URL}match/initDeck?deck=${deckEncode}`, {
+            method: 'GET',
+            headers: headers(token),
+        });
+        const json = await res.json();
+        return json.data ?? json;
+    } catch (erreur) {
+        return erreur;
+    }
+};
+
+// Récupérer l'état complet du match en cours.
+export const getMatch = async (token) => {
+    try {
+        const res = await fetch(`${URL}match/getMatch`, {
+            method: 'GET',
+            headers: headers(token),
+        });
+        if (!res.ok) return null;
+        const json = await res.json();
+        return json.data ?? json;
+    } catch {
+        return null;
+    }
+};
+ 
+// Piocher une carte depuis le deck (une fois par tour).
+export const piocher = async (token) => {
+    try {
+        const res = await fetch(`${URL}match/pickCard`, {
+            method: 'GET',
+            headers: headers(token),
+        });
+        const json = await res.json();
+        return json.data ?? json;
+    } catch (erreur) {
+        return erreur;
+    }
+};
+ 
+//Poser une carte de la main sur le plateau.
+
+export const jouerCarte = async (carteKey, token) => {
+    try {
+        const res = await fetch(`${URL}match/playCard?card=${carteKey}`, {
+            method: 'GET',
+            headers: headers(token),
+        });
+        const json = await res.json();
+        return json.data ?? json;
+    } catch (erreur) {
+        return erreur;
+    }
+};
+ 
+// Attaquer une carte adverse sur le plateau.
+export const attaquer = async (carteKey, carteEnnemie, token) => {
+    try {
+        const res = await fetch(`${URL}match/attack?card=${carteKey}&ennemyCard=${carteEnnemie}`, {
+            method: 'GET',
+            headers: headers(token),
+        });
+        const json = await res.json();
+        return json.data ?? json;
+    } catch (erreur) {
+        return erreur;
+    }
+};
+ 
+//Attaquer directement les points de vie adverses (plateau adverse vide).
+export const attaquerJoueur = async (carteKey, token) => {
+    try {
+        const res = await fetch(`${URL}match/attackPlayer?card=${carteKey}`, {
+            method: 'GET',
+            headers: headers(token),
+        });
+        const json = await res.json();
+        return json.data ?? json;
+    } catch (erreur) {
+        return erreur;
+    }
+};
+ 
+// Terminer son tour.
+export const finirTour = async (token) => {
+    try {
+        const res = await fetch(`${URL}match/endTurn`, {
+            method: 'GET',
+            headers: headers(token),
+        });
+        const json = await res.json();
+        return json.data ?? json;
+    } catch (erreur) {
+        return erreur;
+    }
+};
+ 
+//Terminer le match (appeler quand les deux turn sont false).
+export const finirMatch = async (token) => {
+    try {
+        const res = await fetch(`${URL}match/finishMatch`, {
             method: 'GET',
             headers: headers(token),
         });
