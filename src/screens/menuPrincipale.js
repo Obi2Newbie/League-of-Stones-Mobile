@@ -6,7 +6,7 @@ import ToastBanner from '../fragments/toastBanner';
 import Chargement from '../fragments/chargement';
 import Pile from '../fragments/pile';
 import ConfirmationMotDePasse from '../fragments/confirmationMotDePasse';
-import { seDeconnecter, supprimerCompte, participer, getJoueursEnLigne, verifierMatch, envoyerDefi } from '../../api/request';
+import { seDeconnecter, supprimerCompte, participer, getJoueursEnLigne, verifierMatch, envoyerDefi, accepterDefi } from '../../api/request';
 import { useNavigation } from '@react-navigation/native';
 
 // Carte joueur en ligne 
@@ -160,22 +160,24 @@ export default function MenuPrincipale() {
     };
 
     // Accepter un défi reçu
-    const accepterDefi = async (defi) => {
-        setChargement(true);
-        try {
-            const match = await accepterDefi(defi.matchmakingId, donneeUtilisateur?.token);
-            if (match?.player1) {
-                showToast(`Match créé ! Vous affrontez @${match.player1.name}`, "success");
-                navigation.navigate('ChoisirDeck');
-            } else {
-                showToast(match?.message || "Impossible d'accepter le défi.", "error");
-            }
-        } catch {
-            showToast("Erreur lors de l'acceptation du défi.", "error");
-        } finally {
-            setChargement(false);
+    const accepteDefi = async (defi) => {
+    setChargement(true);
+    try {
+        const match = await accepterDefi(defi.matchmakingId, donneeUtilisateur?.token);
+        console.log("Réponse accepterDefi :", JSON.stringify(match));  // ← add this
+        if (match?.player1) {
+            showToast(`Match créé ! Vous affrontez @${match.player1.name}`, "success");
+            navigation.navigate('ChoisirDeck');
+        } else {
+            showToast(match?.message || "Impossible d'accepter le défi.", "error");
         }
-    };
+    } catch (e) {
+        console.log("Erreur catch :", e);  // ← and this
+        showToast("Erreur lors de l'acceptation du défi.", "error");
+    } finally {
+        setChargement(false);
+    }
+};
 
     return (
         <>
@@ -239,7 +241,7 @@ export default function MenuPrincipale() {
                         </View>
                     ) : (
                         defisRecus.map((defi, i) => (
-                            <CarteDefi key={defi.matchmakingId ?? i} defi={defi} onAccepter={accepterDefi} />
+                            <CarteDefi key={defi.matchmakingId ?? i} defi={defi} onAccepter={accepteDefi} />
                         ))
                     )}
                 </ScrollView>
